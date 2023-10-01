@@ -55,6 +55,9 @@ const listMovies = async (genreID)=> {
 </template>
 
 <style scoped>
+h1{
+  text-align: center;
+}
 .genre-list {
   display: flex;
   justify-content: center;
@@ -65,18 +68,56 @@ const listMovies = async (genreID)=> {
 }
 
 .genre-item {
-  background-color: #5d6424;
-  border-radius: 1rem;
+  background-color: rgba(240, 240, 240, 0.363);
+  border-radius: 0.50rem;
   padding: 0.5rem 1rem;
   align-self: center;
-  color: #fff;
+  color: #030303;
   display: flex;
   justify-content: center;
+  cursor: pointer;
+}
+.movie-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rem;
+  margin-left: 5rem;
+  margin-top: 2rem;
+  border-radius: 5px;
+ 
+}
+  .movie-card{
+  width: 15rem;
+  height: 25rem;
+  border-radius: 0.5rem;
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 0 0.2rem #000;
+  transition: transform 0.3s;
+  }
+  .movie-card:hover {
+  width: 15rem;
+  height: 25rem;
+  border-radius: 0.5rem;
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 0 0.2rem #000;
+  transform: scale(1.1);
+}
+.movie-card img {
+  width: 100%;
+  height: 20rem;
+}
+.tv-details{
+  padding: 0 0.5rem;
+}
+.tv-name{
+  font-size: 1.1rem;
+  text-align: center;
+  font-weight: bold;
+  line-height: 1.1rem;
+  height: 1rem;
 }
 
-.genre-item:hover {
-  cursor: pointer;
-  background-color: #7d8a2e;
-  box-shadow: 0 0 0.5rem #5d6424;
-}
+
 </style>
