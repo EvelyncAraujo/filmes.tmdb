@@ -4,6 +4,9 @@ import api from '@/plugins/axios'
 
 const genres = ref([])
 const movies = ref([])
+const getGenreName = (id) => genres.value.find((genre) => genre.id === id).name
+const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
+
 
 onMounted(async () => {
   try {
@@ -24,7 +27,8 @@ const listMovies = async (genreID)=> {
   });
   movies.value = response.data.results
 };
-
+import Loading from 'vue-loading-overlay'
+const isLoading = ref(false);
 
 </script>
 
