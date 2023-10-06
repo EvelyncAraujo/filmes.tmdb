@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/plugins/axios'
+import genreStore from '@/stores/genres'
 
 const genres = ref([])
 const movies = ref([]);
@@ -20,8 +21,9 @@ const listMovies = async (genreId) => {
 };
 
 onMounted(async () => {
-  const response = await api.get('genre/movie/list?language=pt-BR')
-  genres.value = response.data.genres
+  isLoading.value = true
+  await genreStore.getAllGenres('movie')
+  isLoading.value = false
 })
 import Loading from 'vue-loading-overlay'
 const isLoading = ref(false);
@@ -34,7 +36,10 @@ const isLoading = ref(false);
   <h1>Filmes</h1>
   <ul class="genre-list">
     <loading v-model:active="isLoading" is-full-page />
-    <li v-for="genre in genres" :key="genre.id" @click="listMovies(genre.id)" class="genre-item">
+    <li v-for="genre in genreStore.genres"
+      :key="genre.id"
+      @click="listMovies(genre.id)"
+      class="genre-item">
       {{ genre.name }}
     </li>
 
@@ -50,8 +55,9 @@ const isLoading = ref(false);
         <p class="movie-release-date">{{ formatDate(movie.release_date) }}</p>
         <p class="movie-genres">
           <span v-for="genre_id in movie.genre_ids" :key="genre_id" @click="listMovies(genre_id)">
-            {{ getGenreName(genre_id) }}
-          </span>
+    {{ genreStore.getGenreName(genre_id) }}
+  </span>
+
         </p>
       </div>
 
