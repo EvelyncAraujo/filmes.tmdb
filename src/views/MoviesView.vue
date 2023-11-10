@@ -2,33 +2,30 @@
 import { ref, onMounted } from 'vue'
 import api from '@/plugins/axios'
 import genreStore from '@/stores/genres'
+import Loading  from 'vue-loading-overlay';
 
-const genres = ref([])
+const isLoading = ref(false)
 const movies = ref([]);
-const getGenreName = (id) => genres.value.find((genre) => genre.id === id).name
 const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
-
-const listMovies = async (genreId) => {
-  isLoading.value = true;
-  const response = await api.get('discover/movie', {
-    params: {
-      with_genres: genreId,
-      language: 'pt-BR'
-    }
-  });
-  movies.value = response.data.results
-  isLoading.value = false;
-};
 
 onMounted(async () => {
   isLoading.value = true
   await genreStore.getAllGenres('movie')
   isLoading.value = false
 })
-import Loading from 'vue-loading-overlay'
-const isLoading = ref(false);
 
-
+const listMovies = async (genreId) => {
+  genreStore.setCurrentGenreId(genreId);
+  isLoading.value = true;
+  const response = await api.get('discover/movie', {
+    params: {
+      with_genres: genreId,
+      language: 'pt-BR',
+    },
+  });
+  movies.value = response.data.results;
+  isLoading.value = false;
+};
 </script>
 
 
@@ -36,11 +33,9 @@ const isLoading = ref(false);
   <h1>Filmes</h1>
   <ul class="genre-list">
     <loading v-model:active="isLoading" is-full-page />
-    <li v-for="genre in genreStore.genres"
-      :key="genre.id"
-      @click="listMovies(genre.id)"
-      class="genre-item">
-      {{ genre.name }}
+    <li v-for="genre in genreStore.genres" :key="genre.id" @click="listMovies(genre.id)" class="genre-item"
+      :class="{ active: genre.id === genreStore.currentGenreId }">
+      {{  genre.name }}
     </li>
 
   </ul>
@@ -50,13 +45,14 @@ const isLoading = ref(false);
       <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" :alt="movie.title" />
       <div class="movie-details">
         <p class="movie-title">{{ movie.title }}</p>
-        <p class="movie-release-date">{{ movie.release_date }}</p>
         <p class="movie-genres">{{ movie.genre_ids }}</p>
         <p class="movie-release-date">{{ formatDate(movie.release_date) }}</p>
         <p class="movie-genres">
-          <span v-for="genre_id in movie.genre_ids" :key="genre_id" @click="listMovies(genre_id)">
-    {{ genreStore.getGenreName(genre_id) }}
-  </span>
+          <span v-for="genre_id in movie.genre_ids" :key="genre_id"
+           @click="listMovies(genre_id)"
+           :class="{ active: genre_id === genreStore.currentGenreId }">
+            {{  genreStore.getGenreName(genre_id) }}
+          </span>
 
         </p>
       </div>
@@ -139,6 +135,7 @@ h1 {
   font-size: 18px;
   cursor: pointer;
 }
+
 .movie-genres {
   display: flex;
   flex-direction: row;
@@ -161,5 +158,15 @@ h1 {
   cursor: pointer;
   background-color: #455a08;
   box-shadow: 0 0 0.5rem #748708;
+}
+.active {
+  background-color: #67b086;
+  font-weight: bolder;
+}
+
+.movie-genres span.active {
+  background-color: #abc322;
+  color: #000;
+  font-weight: bolder;
 }
 </style>

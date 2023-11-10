@@ -1,49 +1,62 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '@/plugins/axios'
-import Loading from 'vue-loading-overlay'
-import genreStore from '@/stores/genres'
+import { ref, onMounted } from "vue";
+import api from "@/plugins/axios";
+import Loading from "vue-loading-overlay";
+import genreStore from "@/stores/genres";
 
-const isLoading = ref(false)
-const programas = ref([])
+const isLoading = ref(false);
+const programas = ref([]);
 
-const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
+const formatDate = (date) => new Date(date).toLocaleDateString("pt-BR");
 
 const listTv = async (genreId) => {
-  isLoading.value = true
-  const response = await api.get('discover/tv', {
+  genreStore.setCurrentGenreId(genreId);
+  isLoading.value = true;
+  const response = await api.get("discover/tv", {
     params: {
       with_genres: genreId,
-      language: 'pt-BR'
-    }
-  })
-  programas.value = response.data.results
-  isLoading.value = false
-}
+      language: "pt-BR",
+    },
+  });
+  programas.value = response.data.results;
+  isLoading.value = false;
+};
 
 onMounted(async () => {
-  isLoading.value = true
-  await genreStore.getAllGenres('tv')
-  isLoading.value = false
-})
+  isLoading.value = true;
+  await genreStore.getAllGenres("tv");
+  isLoading.value = false;
+});
 </script>
 
 <template>
   <h1>Programas de TV</h1>
   <ul class="genre-list">
-    <li v-for="genre in genreStore.genres" :key="genre.id" @click="listTv(genre.id)" class="genre-item">
-      {{ genre.name }}
-    </li>
+    <li
+      v-for="genre in genreStore.genres"
+      :key="genre.id"
+      @click="listTv(genre.id)"
+      class="genre-item"
+      :class="{ active: genre.id === genreStore.currentGenreId }"
+    >{{ genre.name }}</li>
   </ul>
   <loading v-model:active="isLoading" is-full-page />
   <div class="tv-list">
     <div v-for="programa in programas" :key="programa.id" class="tv-card">
-      <img :src="`https://image.tmdb.org/t/p/w500${programa.poster_path}`" :alt="programa.name" />
+      <img
+        :src="`https://image.tmdb.org/t/p/w500${programa.poster_path}`"
+        :alt="programa.name"
+      />
       <div class="tv-details">
         <p class="tv-title">{{ programa.name }}</p>
         <p class="tv-release-date">{{ formatDate(programa.first_air_date) }}</p>
         <p class="tv-genres">
-          <span v-for="genre_id in programa.genre_ids" :key="genre_id" @click="listTv(genre_id)">
+          <span
+            v-for="genre_id in programa.genre_ids"
+            :key="genre_id"
+            @click="listTv(genre_id)"
+            :class="{ active: genre_id === genreStore.currentGenreId }"
+          >
             {{ genreStore.getGenreName(genre_id) }}
           </span>
         </p>
@@ -127,5 +140,15 @@ onMounted(async () => {
 .tv-genres span:hover {
   cursor: pointer;
   background-color: #455a08;
+}
+
+.tv-genres span.active {
+  background-color: #abc322;
+  color: #000;
+  font-weight: bolder;
+}
+.active {
+  background-color: #67b086;
+  font-weight: bolder;
 }
 </style>
