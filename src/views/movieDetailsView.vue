@@ -1,8 +1,8 @@
 <script setup>
   import { defineProps, onMounted } from 'vue';
   import { useMovieStore } from '@/stores/movie';
-  
   const movieStore = useMovieStore();
+
 
   const props = defineProps({
     movieId: {
@@ -27,8 +27,7 @@
 
       <div class="details">
         <h1>Filme: {{ movieStore.currentMovie.title }}</h1>
-        <p>{{ movieStore.currentMovie.tagline }}</p>
-        <p>{{ movieStore.currentMovie.overview }}</p>
+        <p>{{ movieStore.currentMovie.tagline }} {{ movieStore.currentMovie.overview }}</p>
         <p>Orçamento: ${{ movieStore.currentMovie.budget }}</p>
         <p>Avaliação: {{ movieStore.currentMovie.vote_average }}</p>
       </div>
