@@ -1,18 +1,24 @@
 import { reactive, computed } from 'vue';
 import { defineStore } from 'pinia';
+import { useTemplateStore } from './template';
 import api from '@/plugins/axios';
 
-export const usetvStore = defineStore('Tv', () => {
+export const useTVStore = defineStore('tv', () => {
   const state = reactive({
-    currenttv: {},
+    currentTV: {
+        vote_average: 0
+    },
   });
 
-  const currentMovie = computed(() => state.currenttv);
+  const currentTV = computed(() => state.currentTV);
 
-  const getMovieDetail = async (movieId) => {
-    const response = await api.get(`movie/${movieId}`);
-    state.currenttv = response.data;
+  const getTVDetail = async (programaId) => {
+    const templateStore = useTemplateStore();
+    templateStore.setIsLoading(true);
+    const response = await api.get(`tv/${programaId}`);
+    state.currentTV = response.data;
+    templateStore.setIsLoading(false);
   };
 
-  return { currenttv, gettvDetail };
+  return { currentTV, getTVDetail };
 });

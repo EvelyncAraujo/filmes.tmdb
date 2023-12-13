@@ -117,7 +117,7 @@ h1 {
   height: 3.2rem;
 }
 
-.movie-release-date,
+
 .movie-genres {
   font-size: 0.9rem;
   text-align: center;
